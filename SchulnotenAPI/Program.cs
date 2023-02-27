@@ -16,12 +16,17 @@ builder.Services.AddSwaggerGen(c =>
          Version = "v1" });
 });
 
+builder.Services.AddCors(options => options.AddDefaultPolicy(options => options.AllowAnyHeader().AllowCredentials().AllowAnyMethod()));
+
+
 var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Grades API V1");
 });
+
+app.UseCors(policyBuilder => policyBuilder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 
 app.MapGet("/", () => "Hello World!");
 
