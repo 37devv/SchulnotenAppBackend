@@ -6,6 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSqlite<GradeContext>("Data Source=Grades.db");
+
 //builder.Services.AddDbContext<GradeContext>(options => options.UseSqlite("Data Source=Grades.db"));
 
 builder.Services.AddSwaggerGen(c =>
@@ -25,8 +26,14 @@ app.UseSwaggerUI(c =>
 {
    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Grades API V1");
 });
-
 app.UseCors(policyBuilder => policyBuilder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
+
+using(var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<GradeContext>();
+    dbContext.Database.EnsureCreated();
+    // use context
+}
 
 app.MapGet("/", () => "Hello World!");
 
